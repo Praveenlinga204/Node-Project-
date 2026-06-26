@@ -1,23 +1,26 @@
-const express = require("express");
-const errorHandler = require("./middleware/errorHandler");
-const connectDB = require("./config/dbconnection.js")
-const dotenv = require("dotenv").config()
+const http = require("http");
+const fs = require('fs');
 
 
+const server = http.createServer((req,res)=>{
+   let path = './docs/';  //C:\Users\Admin\OneDrive\Desktop\Nodeejs\docs
 
 
-const app = express()
-app.use(express.json())
-app.use(errorHandler)
-connectDB()
+    if(req.url == "/home"){
+        path += "index.html"
+    }else if(req.url == '/about'){
+        path += 'about.html'
+    }
+    fs.readFile(path,(err,data)=>{
+        if(err){
+                console.log(err.message)
+        }else{
+            res.write(data)
+            res.end()
+        }
+    })
+})
 
-
-const port =5001;
-
-app.use("/api/contacts",require("./Routes/contactRoutes"))
-
-
-
-app.listen(port,()=>{
-    console.log(`server is listining http://localhost:${port}`)
+server.listen(3000,'localhost',()=>{
+    console.log('server is listing')
 })
